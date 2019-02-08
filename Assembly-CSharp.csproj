@@ -69,9 +69,6 @@
     <Compile Include="Assets\Project\Scripts\Player.cs" />
     <Compile Include="Assets\Project\Scripts\PoolManager.cs" />
     <None Include="Assets\Cyberleaf Music - Chiptunes Lite\readme.txt" />
-    <None Include="Assets\_Creepy_Cat\_3D Scifi Kit Starter Kit\_Docs\Doc.txt" />
-    <None Include="Assets\info_morgueroom.txt" />
-    <None Include="Assets\Toby Fredson\Rocky Hills Environment - Light Pack\Legacy Project\Legacy Project_Read Me!.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/acorbett/Documents/Unity_Stuff/FPS/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
