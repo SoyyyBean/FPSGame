@@ -5,8 +5,10 @@ using UnityEngine;
 public class Bullets : MonoBehaviour {
     public float lifeTime = 20f;
     public float speed = 10f;
-    
+    public int damage = 10;
 
+    private bool playerBull;
+    public bool PlayerBull { get { return playerBull; } set { playerBull = value; } }
     private float lifeTimer;
 	// Use this for initialization
 	void OnEnable () {

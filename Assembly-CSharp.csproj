@@ -66,9 +66,12 @@
     <Compile Include="Assets\Project\Scripts\Enemy.cs" />
     <Compile Include="Assets\Project\Scripts\GameControler.cs" />
     <Compile Include="Assets\Project\Scripts\HealthCrate.cs" />
+    <Compile Include="Assets\Project\Scripts\Knockback.cs" />
     <Compile Include="Assets\Project\Scripts\Player.cs" />
     <Compile Include="Assets\Project\Scripts\PoolManager.cs" />
+    <Compile Include="Assets\Project\Scripts\ShooterBaddie.cs" />
     <None Include="Assets\Cyberleaf Music - Chiptunes Lite\readme.txt" />
+    <None Include="Assets\BrokenVector\FreeLowPolyPack\readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/acorbett/Documents/Unity_Stuff/FPS/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

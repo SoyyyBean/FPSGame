@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
-    [Header("Visuals")] 
+public class Player : MonoBehaviour
+{
+    [Header("Visuals")]
     public Camera playerCamera;
     public GameObject gun;
     [Header("GamePlay")]
@@ -13,9 +14,9 @@ public class Player : MonoBehaviour {
     public int AmmoStore { get { return ammoStore; } }
     public int startStore = 24;
     private int ammo;
-    public int Ammo { get { return ammo;  } }
+    public int Ammo { get { return ammo; } }
     public int ammoMax = 12;
-    
+    public float reloadDelay = 1f;
     //Reloading t/f
     public bool reloading = false;
 
@@ -23,16 +24,18 @@ public class Player : MonoBehaviour {
     //Health
     public int startHealth = 100;
     private int health;
-    public int Health {  get { return health; } }
-	// Use this for initialization 
-	void Start () {
+    public int Health { get { return health; } }
+    // Use this for initialization 
+    void Start()
+    {
         ammo = startAmmo;
         ammoStore = startStore;
         health = startHealth;
-	}
+    }
 
     // Update is called once per frame 
-    void Update() {
+    void Update()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             if (ammo > 0 && ammoStore > 0 && !reloading)
@@ -40,7 +43,7 @@ public class Player : MonoBehaviour {
                 ammoStore--;
                 ammo--;
 
-                GameObject bulletObject = PoolManager.Instance.getBullet();
+                GameObject bulletObject = PoolManager.Instance.getBullet(true);
 
                 bulletObject.transform.position = playerCamera.transform.position + playerCamera.transform.forward;
                 bulletObject.transform.forward = playerCamera.transform.forward;
@@ -48,15 +51,51 @@ public class Player : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            gun.transform.Translate(100,100,100);
+            gun.transform.Translate(100, 100, 100);
             reloading = true;
             Debug.Log("Reload");
-            Invoke("reload", 1f);
-            
+            Invoke("reload", reloadDelay);
+
 
         }
     }
+    void OnTriggerEnter(Collider otherCollider)
+    {
+        if (isHurt == false)
+        {
+            GameObject hazard = null;
+            if (otherCollider.GetComponent<Enemy>() != null)
+            { 
+                Enemy enemy = otherCollider.GetComponent<Enemy>();
+                hazard = enemy.gameObject;
+                health -= enemy.damage;
 
+
+            }
+            else if (otherCollider.GetComponent<Bullets>() != null)
+            {
+                Bullets bullet = otherCollider.GetComponent<Bullets>();
+                if (bullet.PlayerBull == false)
+                {
+                    hazard = bullet.gameObject;
+                    health -= bullet.damage;
+                    bullet.gameObject.SetActive(false);
+
+                }
+            }
+            if (hazard != null)
+            {
+                isHurt = true;
+
+                Vector3 hurtDirection = (transform.position - hazard.transform.position).normalized;
+                Vector3 knockbackDirection = (hurtDirection + Vector3.up).normalized;
+
+                GetComponent<Knockback>().AddForce(knockbackDirection, knockback);
+
+                Invoke("hurt", .5f); // god help me
+            }
+        }
+    }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
@@ -68,21 +107,7 @@ public class Player : MonoBehaviour {
             ammoStore += ammoCrate.ammo;
             Destroy(ammoCrate.gameObject);
         }
-        else if (hit.collider.GetComponent<Enemy>() != null)
-        {
-            if (isHurt == false)
-            {
-                Enemy enemy = hit.collider.GetComponent<Enemy>();
-                health -= enemy.damage;
-                isHurt = true;
-                Vector3 hurtDirection = (transform.position - enemy.transform.position).normalized;
-                Vector3 knockbackDirection = (hurtDirection + Vector3.up).normalized;
-
-                GetComponent<Rigidbody>().AddForce(knockback * knockbackDirection);
-
-                Invoke("hurt", .5f); // god help me
-            }
-        }
+        
         else if (hit.collider.GetComponent<HealthCrate>() != null)
         {  //crate stuff           
             HealthCrate healthCrate = hit.collider.GetComponent<HealthCrate>();
@@ -101,61 +126,64 @@ public class Player : MonoBehaviour {
 
         }
     }
-        void hurt()
+
+
+
+    void hurt()
     {
         isHurt = false;
     }
-        void reload()
-         {
+    void reload()
+    {
         gun.transform.Translate(-100, -100, -100);
         reloading = false;
 
-            if (ammoStore < 12 && ammo != 12)
+        if (ammoStore < 12 && ammo != 12)
+        {
+            int hell = ammo + ammoStore;
+            if (hell > 12)
             {
-                int hell = ammo + ammoStore;
-                if (hell > 12)
-                {
-                    ammo = ammoStore;
-                }
-                else
-                {
-                    ammo = ammoStore;
-                }
+                ammo = ammoStore;
             }
-
             else
             {
-                //PAYDAY 2 STYLE!
-                int remain = ammoMax - ammo;
-                ammo = ammo + remain;
+                ammo = ammoStore;
             }
-
-            //oh god
-            //int remain = startAmmo - ammo;
-            //ammo = 0;
-            //ammoStore =+ remain;
-            //ammoStore =- startAmmo;
-            //ammo = startAmmo;
-            //Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
-
-
-
-
-            //help
-
-            //int remain = startAmmo - ammo;
-            //Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
-            //ammo = startAmmo;
-            // Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
-            // ammoStore =- remain;
-            // Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
-
         }
+
+        else
+        {
+            //PAYDAY 2 STYLE!
+            int remain = ammoMax - ammo;
+            ammo = ammo + remain;
+        }
+
+        //oh god
+        //int remain = startAmmo - ammo;
+        //ammo = 0;
+        //ammoStore =+ remain;
+        //ammoStore =- startAmmo;
+        //ammo = startAmmo;
+        //Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
+
+
+
+
+        //help
+
+        //int remain = startAmmo - ammo;
+        //Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
+        //ammo = startAmmo;
+        // Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
+        // ammoStore =- remain;
+        // Debug.Log(remain + " " + startAmmo + " " + Ammo + " " + ammoStore);
+
     }
-    
+}
 
 
 
 
- 
+
+
 

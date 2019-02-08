@@ -25,22 +25,24 @@ public class PoolManager : MonoBehaviour {
             GameObject prefabInstance = Instantiate(bulletPrefab);
             prefabInstance.transform.SetParent(transform);
             prefabInstance.SetActive(false);
-
+            
             bullets.Add(prefabInstance);
         }
 	}
 	
-    public GameObject getBullet()
+    public GameObject getBullet(bool shotByPlayer)
     {
         foreach (GameObject bullet in bullets)
         {
             if(!bullet.activeInHierarchy)
             {
+                bullet.GetComponent<Bullets>().PlayerBull = shotByPlayer;
                 bullet.SetActive(true);
                 return bullet;
             }
         }
         GameObject prefabInstance = Instantiate(bulletPrefab);
+        prefabInstance.GetComponent<Bullets>().PlayerBull = shotByPlayer;
         prefabInstance.transform.SetParent(transform);
         bullets.Add(prefabInstance);
         return prefabInstance;
